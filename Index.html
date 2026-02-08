@@ -1,0 +1,66 @@
+<body><button onclick="showForm()">Report a Bug</button>
+
+<div id="formArea" style="display:none; margin-top:20px;">
+    <h3>Report a Bug</h3>
+
+    <input id="appName" placeholder="App / Software Name"><br><br>
+
+    <input id="deviceInfo" placeholder="Device / OS"><br><br>
+
+    <textarea id="bugText" placeholder="Describe the problem..." rows="4" cols="30"></textarea>
+    <br><br>
+
+    <button onclick="submitBug()">Submit</button>
+    <button onclick="hideForm()">Cancel</button>
+</div>
+
+<h3>Reported Bugs:</h3>
+<ul id="bugList"></ul>
+<script>
+function showForm() {
+    document.getElementById("formArea").style.display = "block";
+}
+
+function hideForm() {
+    document.getElementById("formArea").style.display = "none";
+}
+
+function loadBugs() {
+    let bugs = JSON.parse(localStorage.getItem("bugs")) || [];
+    bugs.forEach(bug => addBugToList(bug));
+}
+
+function submitBug() {
+    let app = document.getElementById("appName").value;
+    let device = document.getElementById("deviceInfo").value;
+    let bug = document.getElementById("bugText").value.trim();
+
+    if (!bug) return alert("Write something!");
+
+    let bugs = JSON.parse(localStorage.getItem("bugs")) || [];
+    bugs.push({ app, device, bug });
+
+    localStorage.setItem("bugs", JSON.stringify(bugs));
+
+    addBugToList({ app, device, bug });
+
+    document.getElementById("bugText").value = "";
+}
+
+function addBugToList(bug) {
+    let li = document.createElement("li");
+
+    li.innerHTML =
+        "<strong>App:</strong> " + (bug.app || "") + "<br>" +
+        "<strong>Device:</strong> " + (bug.device || "") + "<br>" +
+        "<strong>Issue:</strong> " + (bug.bug || bug);
+
+    document.getElementById("bugList").appendChild(li);
+}
+
+loadBugs();
+</script>
+
+
+</body>
+</html>
